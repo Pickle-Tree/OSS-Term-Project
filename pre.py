@@ -107,3 +107,4 @@ while True:
     # 'q'를 누르면 프로그램 종료
     if cv2.waitKey(1) == ord('q'):
         sys.exit(1)
+        
