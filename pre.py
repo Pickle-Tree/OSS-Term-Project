@@ -80,3 +80,29 @@ while True:
 
             min_coords = np.min(shape_2d, axis=0)
             max_coords = np.max(shape_2d, axis=0)
+            cv2.circle(img, center=tuple(min_coords), radius=1, color=(255, 0, 0), thickness=2, lineType=cv2.LINE_AA)
+            cv2.circle(img, center=tuple(max_coords), radius=1, color=(255, 0, 0), thickness=2, lineType=cv2.LINE_AA)
+
+            face_size = int(np.max(max_coords - min_coords))
+            face_sizes.append(face_size)
+            if len(face_sizes) > 10:
+                del face_sizes[0]
+            mean_face_size = int(np.mean(face_sizes) * 1.8)
+
+            face_roi = np.array([
+                int(max(0, min_coords[1] - face_size / 2)),
+                int(min(img.shape[0], max_coords[1] + face_size / 2)),
+                int(max(0, min_coords[0] - face_size / 2)),
+                int(min(img.shape[1], max_coords[0] + face_size / 2))
+            ])
+
+            result = overlay_transparent(ori, overlay, center_x + 8, center_y - 25, overlay_size=(mean_face_size, mean_face_size))
+
+    # 각각의 이미지를 화면에 출력
+    cv2.imshow('original', ori)
+    cv2.imshow('facial landmarks', img)
+    cv2.imshow('result', result)
+
+    # 'q'를 누르면 프로그램 종료
+    if cv2.waitKey(1) == ord('q'):
+        sys.exit(1)
