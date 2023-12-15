@@ -80,7 +80,6 @@ while True:
 
             min_coords = np.min(shape_2d, axis=0)
             max_coords = np.max(shape_2d, axis=0)
-
             cv2.circle(img, center=tuple(min_coords), radius=1, color=(255, 0, 0), thickness=2, lineType=cv2.LINE_AA)
             cv2.circle(img, center=tuple(max_coords), radius=1, color=(255, 0, 0), thickness=2, lineType=cv2.LINE_AA)
 
@@ -107,4 +106,3 @@ while True:
     # 'q'를 누르면 프로그램 종료
     if cv2.waitKey(1) == ord('q'):
         sys.exit(1)
-        
