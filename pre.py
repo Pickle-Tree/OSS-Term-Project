@@ -44,3 +44,39 @@ face_roi = []
 face_sizes = []
 
 result = None
+
+# 프로그램이 실행되는 동안 계속 반복
+while True:
+    ret, img = cap.read()
+    if not ret:
+        break
+
+    img = cv2.resize(img, (int(img.shape[1] * scaler), int(img.shape[0] * scaler)))
+    ori = img.copy()
+
+    if len(face_roi) == 0:
+        faces = detector(img, 1)
+    else:
+        roi_img = img[face_roi[0]:face_roi[1], face_roi[2]:face_roi[3]]
+        faces = detector(roi_img)
+        
+    if len(faces) == 0:
+        print('No faces!')
+        result = ori.copy()  
+    else:
+        for face in faces:
+            if len(face_roi) == 0:
+                dlib_shape = predictor(img, face)
+                shape_2d = np.array([[p.x, p.y] for p in dlib_shape.parts()])
+            else:
+                dlib_shape = predictor(roi_img, face)
+                shape_2d = np.array([[p.x + face_roi[2], p.y + face_roi[0]] for p in dlib_shape.parts()])
+
+            # 얼굴 특징점에 원을 그림
+            for s in shape_2d:
+                cv2.circle(img, center=tuple(s), radius=1, color=(255, 255, 255), thickness=2, lineType=cv2.LINE_AA)
+
+            center_x, center_y = np.mean(shape_2d, axis=0).astype(int)
+
+            min_coords = np.min(shape_2d, axis=0)
+            max_coords = np.max(shape_2d, axis=0)
